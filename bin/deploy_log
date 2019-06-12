@@ -3,7 +3,7 @@
 
 require 'deploy_log'
 
-start, finish, title, branch, on, week = nil
+start, finish, title, branch, on, week, force = nil
 
 OptionParser.new do |opt|
   opt.on('-s', '--start=START', 'Start of date range') do |time|
@@ -30,6 +30,10 @@ OptionParser.new do |opt|
     week = w
   end
 
+  opt.on('-f', '--force', 'Pull data from api, ignore cache') do |f|
+    force = f
+  end
+
   opt.on('-v', '--version', 'Prints version information') do
     puts DeployLog::VERSION
     exit
@@ -37,6 +41,7 @@ OptionParser.new do |opt|
 end.parse!
 
 model = DeployLog::Github::Deploys.new
+model.force = force
 
 return model.merged_during_week(week) if week
 return model.merged_between(start, finish) if start

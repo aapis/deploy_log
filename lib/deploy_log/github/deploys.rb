@@ -3,8 +3,10 @@
 module DeployLog
   module Github
     class Deploys
+      attr_accessor :force
+
       def initialize
-        @github = Helper.new(ARGV.first)
+        @github = Helper.new(ARGV.first, force)
         @calendar = DeployLog::Calendar.new
       end
 
