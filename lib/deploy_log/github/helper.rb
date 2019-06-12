@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require 'octokit'
+require 'fileutils'
 
 module DeployLog
   module Github
@@ -13,6 +14,9 @@ module DeployLog
       end
 
       def pulls_in_timeframe(date_start = nil, date_end = nil)
+        cache = cache_file(date_start, date_end)
+        return cache[:contents] if should_show_cache(cache)
+
         @client.auto_paginate = true
         list = @client.pull_requests(@repo_location,
           state: :closed,
@@ -22,7 +26,7 @@ module DeployLog
 
         prs_covered = 0
 
-        File.open('/tmp/github-deploys.log', 'w+') do |f|
+        File.open(cache[:path], 'w+') do |f|
           list.each do |pr|
             next unless (date_start..date_end).cover? pr.merged_at
 
@@ -52,13 +56,16 @@ module DeployLog
       end
 
       def search_pulls_by(value, field = :title)
+        cache = cache_file(value, field)
+        return cache[:contents] if should_show_cache(cache)
+
         list = @client.pull_requests(@repo_location,
           :state => :all,
           :per_page => 100
           )
         prs_covered = 0
 
-        File.open('/tmp/github-deploys.log', 'w+') do |f|
+        File.open(cache[:path], 'w+') do |f|
           list.each do |pr|
             next unless nested_hash_value(pr, field).match?(/#{value}\b/)
 
@@ -99,6 +106,20 @@ module DeployLog
         commits.map do |c|
           "#{c.author.login} committed '#{c.commit.message}' at #{formatted_time(c.commit.committer.date, true)}"
         end
+      end
+
+      def cache_file(*args)
+        hash = Digest::MD5.hexdigest(@repo_location + args.join('|'))
+        path = FileUtils.touch "/tmp/github-deploys-#{hash}.log"
+
+        {
+          contents: system("cat #{path.first}"),
+          path: path.first
+        }
+      end
+
+      def should_show_cache(cache)
+        File.exist?(cache[:path]) && !File.size(cache[:path]).zero?
       end
 
       def formatted_time(time, use_local_time = false)
