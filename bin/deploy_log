@@ -3,7 +3,7 @@
 
 require 'deploy_log'
 
-start, finish, title, branch, on = nil
+start, finish, title, branch, on, week = nil
 
 OptionParser.new do |opt|
   opt.on('-s', '--start=START', 'Start of date range') do |time|
@@ -26,6 +26,10 @@ OptionParser.new do |opt|
     branch = br
   end
 
+  opt.on('-w', '--week=WEEK', 'Get PRs merged during week number X') do |w|
+    week = w
+  end
+
   opt.on('-v', '--version', 'Prints version information') do
     puts DeployLog::VERSION
     exit
@@ -33,6 +37,8 @@ OptionParser.new do |opt|
 end.parse!
 
 model = DeployLog::Github::Deploys.new
+
+return model.merged_during_week(week) if week
 return model.merged_between(start, finish) if start
 return model.merged_on(on) if on
 return model.pr_title(title) if title

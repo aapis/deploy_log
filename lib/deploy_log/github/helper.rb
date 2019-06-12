@@ -97,7 +97,7 @@ module DeployLog
       def committers_for(num)
         commits = @client.pull_request_commits(@repo_location, num)
         commits.map do |c|
-          "#{c.author.login} committed '#{c.commit.message}'"
+          "#{c.author.login} committed '#{c.commit.message}' at #{formatted_time(c.commit.committer.date, true)}"
         end
       end
 

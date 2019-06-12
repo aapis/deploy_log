@@ -30,6 +30,15 @@ module DeployLog
         @github.pulls_in_timeframe(start, finish)
       end
 
+      def merged_during_week(week_num)
+        return Notify.error 'Week number (--week|-w) is a required argument' if week_num.nil?
+
+        start = DeployLog::Calendar.start_of_week(24)
+        finish = start + 24 * 60 * 60 - 1
+
+        @github.pulls_in_timeframe(start, finish)
+      end
+
       def pr_title(title)
         @github.search_pulls_by(title, :title)
       end

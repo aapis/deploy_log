@@ -44,5 +44,13 @@ class DeployLogTest < Minitest::Test
         assert model.merged_today
       end
     end
+
+    describe '.merged_during_week' do
+      it 'finds PRs in the timeframe' do
+        ARGV.replace CLI_ARGS
+
+        assert model.merged_during_week(24)
+      end
+    end
   end
 end
