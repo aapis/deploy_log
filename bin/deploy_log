@@ -5,7 +5,8 @@ require 'notifaction'
 require 'octokit'
 require 'optionparser'
 require 'time'
-require 'deploy_log'
+# require 'deploy_log'
+require_relative '../lib/deploy_log.rb'
 
 start, finish, title, branch = nil
 
@@ -32,7 +33,7 @@ OptionParser.new do |opt|
   end
 end.parse!
 
-model = GithubDeploys.new
+model = DeployLog::Github::Deploys.new
 model.merged_between(start, finish) if start && finish
 model.pr_title(title) if title
 model.pr_for_branch(branch) if branch
