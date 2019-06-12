@@ -32,6 +32,8 @@ OptionParser.new do |opt|
 
   opt.on('-c', '--clean', 'Pull data from api, ignore cache') do
     system('rm -f /tmp/github-deploys-*.log')
+    Notify.info 'Cleared cache'
+    exit
   end
 
   opt.on('-v', '--version', 'Prints version information') do
