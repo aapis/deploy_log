@@ -30,7 +30,7 @@ OptionParser.new do |opt|
     week = w
   end
 
-  opt.on('-f', '--force', 'Pull data from api, ignore cache') do |f|
+  opt.on('-f', '--force=FORCE', 'Pull data from api, ignore cache') do |f|
     force = f
   end
 
@@ -42,6 +42,7 @@ end.parse!
 
 model = DeployLog::Github::Deploys.new
 model.force = force
+puts force.inspect
 
 return model.merged_during_week(week) if week
 return model.merged_between(start, finish) if start
