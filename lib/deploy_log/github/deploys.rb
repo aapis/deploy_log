@@ -4,7 +4,7 @@ module DeployLog
   module Github
     class Deploys
       def initialize
-        @github = Helper.new(ARGV.first, force)
+        @github = Helper.new(ARGV.first)
         @calendar = DeployLog::Calendar.new
       end
 

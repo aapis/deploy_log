@@ -3,7 +3,7 @@
 
 require 'deploy_log'
 
-start, finish, title, branch, on, week, force = nil
+start, finish, title, branch, on, week = nil
 
 OptionParser.new do |opt|
   opt.on('-s', '--start=START', 'Start of date range') do |time|

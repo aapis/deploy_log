@@ -6,8 +6,6 @@ require 'fileutils'
 module DeployLog
   module Github
     class Helper
-      attr_accessor :force
-
       LINE_FORMAT = "%s (%s)\n - Created by %s\n - Branch: %s\n - Merged by %s on %s\n - Changes: %s\n -- %s\n\n"
 
       def initialize(user_repo)
