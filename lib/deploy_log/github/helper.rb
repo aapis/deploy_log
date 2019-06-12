@@ -52,7 +52,7 @@ module DeployLog
 
         return ::Notify.warning("No pull requests have been merged in the requested date range (#{date_start} - #{date_end})") if prs_covered.zero?
 
-        system('cat /tmp/github-deploys.log')
+        cache[:contents]
       end
 
       def search_pulls_by(value, field = :title)
@@ -91,7 +91,7 @@ module DeployLog
 
         return ::Notify.warning("No pull requests match the requested term (#{value})") if prs_covered.zero?
 
-        system('cat /tmp/github-deploys.log')
+        cache[:contents]
       end
 
       private
