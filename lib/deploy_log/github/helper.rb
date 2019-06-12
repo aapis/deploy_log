@@ -1,10 +1,12 @@
 # frozen_string_literal: true
 
+require 'octokit'
+
 module DeployLog
   module Github
     class Helper
       def initialize(user_repo)
-        @client = Octokit::Client.new(login: ENV['GITHUB_USER'], password: ENV['GITHUB_TOKEN'])
+        @client = ::Octokit::Client.new(login: ENV['GITHUB_USER'], password: ENV['GITHUB_TOKEN'])
         @repo_location = user_repo
       end
 
@@ -42,7 +44,7 @@ module DeployLog
           f.write("============================================================\n#{prs_covered} PR(s) merged from #{date_start} to #{date_end}\n============================================================\n")
         end
 
-        return Notify.warning("No pull requests have been merged in the requested date range (#{date_start} - #{date_end})") if prs_covered.zero?
+        return ::Notify.warning("No pull requests have been merged in the requested date range (#{date_start} - #{date_end})") if prs_covered.zero?
 
         system('cat /tmp/github-deploys.log')
       end
@@ -79,7 +81,7 @@ module DeployLog
           f.write("============================================================\n#{prs_covered} PR(s) matched\n============================================================\n")
         end
 
-        return Notify.warning("No pull requests match the requested term (#{value})") if prs_covered.zero?
+        return ::Notify.warning("No pull requests match the requested term (#{value})") if prs_covered.zero?
 
         system('cat /tmp/github-deploys.log')
       end

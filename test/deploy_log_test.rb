@@ -5,7 +5,35 @@ class DeployLogTest < Minitest::Test
     refute_nil ::DeployLog::VERSION
   end
 
-  def test_it_does_something_useful
-    assert false
+  describe '.merged_between' do
+    let(:model) { DeployLog::Github::Deploys.new }
+    let(:start) { '2019-06-11' }
+    let(:finish) { '2019-06-12' }
+    let(:title) { 'Better Tests' }
+    let(:branch) { 'my_branch' }
+
+    it 'finds PRs in the timeframe' do
+      ARGV.replace ['aapis/deploy_log']
+
+      assert model.merged_between(start, finish)
+    end
+
+    it 'finds PRs in the timeframe' do
+      ARGV.replace ['aapis/deploy_log']
+
+      assert @model.pr_title(title)
+    end
+
+    it 'finds PRs in the timeframe' do
+      ARGV.replace ['aapis/deploy_log']
+
+      assert @model.pr_for_branch(branch)
+    end
+
+    it 'finds PRs in the timeframe' do
+      ARGV.replace ['aapis/deploy_log']
+
+      assert @model.merged_today
+    end
   end
 end
