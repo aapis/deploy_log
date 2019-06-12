@@ -10,6 +10,8 @@ module DeployLog
       def initialize(user_repo)
         @client = ::Octokit::Client.new(login: ENV['GITHUB_USER'], password: ENV['GITHUB_TOKEN'])
         @repo_location = user_repo
+        # cache last API response
+        @last_response = nil
       end
 
       def pulls_in_timeframe(date_start = nil, date_end = nil)
@@ -25,6 +27,7 @@ module DeployLog
         File.open('/tmp/github-deploys.log', 'w+') do |f|
           list.each do |pr|
             next unless (date_start..date_end).cover? pr.merged_at
+            _c = committers_for(pr.number)
 
             prs_covered += 1
 
@@ -89,7 +92,14 @@ module DeployLog
 
       def user_who_merged(pr_number)
         pr = @client.pull_request(@repo_location, pr_number)
+        @last_response = pr
+
         pr.merged_by.login
+      end
+
+      def committers_for(num)
+        puts @last_response.inspect
+        # pr = @client.pull_request(@repo_location, num)
       end
 
       def formatted_time(time, correct_utc = false)
