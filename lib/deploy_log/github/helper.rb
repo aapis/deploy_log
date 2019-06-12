@@ -5,13 +5,11 @@ require 'octokit'
 module DeployLog
   module Github
     class Helper
-      LINE_FORMAT = "%s (%s)\n - Created by %s\n - Branch: %s\n - Merged by %s on %s\n - Changes: %s\n\n"
+      LINE_FORMAT = "%s (%s)\n - Created by %s\n - Branch: %s\n - Merged by %s on %s\n - Changes: %s\n -- %s\n\n"
 
       def initialize(user_repo)
         @client = ::Octokit::Client.new(login: ENV['GITHUB_USER'], password: ENV['GITHUB_TOKEN'])
         @repo_location = user_repo
-        # cache last API response
-        @last_response = nil
       end
 
       def pulls_in_timeframe(date_start = nil, date_end = nil)
@@ -27,7 +25,6 @@ module DeployLog
         File.open('/tmp/github-deploys.log', 'w+') do |f|
           list.each do |pr|
             next unless (date_start..date_end).cover? pr.merged_at
-            _c = committers_for(pr.number)
 
             prs_covered += 1
 
@@ -39,8 +36,9 @@ module DeployLog
                 pr.user.login,
                 pr.head.ref,
                 user_who_merged(pr.number),
-                formatted_time(pr.merged_at),
-                pr.diff_url
+                formatted_time(pr.merged_at, true),
+                pr.diff_url,
+                committers_for(pr.number).join("\n -- ")
               )
             )
           end
@@ -74,8 +72,9 @@ module DeployLog
                 pr.user.login,
                 pr.head.ref,
                 user_who_merged(pr.number),
-                formatted_time(pr.merged_at),
-                pr.diff_url
+                formatted_time(pr.merged_at, true),
+                pr.diff_url,
+                committers_for(pr.number).join("\n -- ")
               )
             )
           end
@@ -90,22 +89,26 @@ module DeployLog
 
       private
 
-      def user_who_merged(pr_number)
-        pr = @client.pull_request(@repo_location, pr_number)
-        @last_response = pr
-
+      def user_who_merged(num)
+        pr = @client.pull_request(@repo_location, num)
         pr.merged_by.login
       end
 
       def committers_for(num)
-        puts @last_response.inspect
-        # pr = @client.pull_request(@repo_location, num)
+        commits = @client.pull_request_commits(@repo_location, num)
+        commits.map do |c|
+          "#{c.author.login} committed '#{c.commit.message}'"
+        end
       end
 
-      def formatted_time(time, correct_utc = false)
+      def formatted_time(time, use_local_time = false)
         time = Time.now if time.nil?
-        time = time.localtime if correct_utc
-        time.strftime('%e/%-m/%Y @ %I:%M:%S%P')
+        time = time.localtime if use_local_time
+
+        fmt = '%e/%-m/%Y @ %I:%M:%S%P'
+        fmt += ' UTC' unless use_local_time
+
+        time.strftime(fmt)
       end
 
       def nested_hash_value(obj, key)
