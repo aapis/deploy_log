@@ -2,11 +2,8 @@
 
 module DeployLog
   class Calendar
-    def start_of_week(week_num)
-      # puts "THIS IS WEEK #{Date.today.cweek}"
-      cal = year_calendar(2019).to_a#[Date.today.cweek]
-      puts cal.inspect
-      cal[:first]
+    def week(week_num)
+      year_calendar(2019).to_a[week_num]
     end
 
     private
@@ -20,14 +17,14 @@ module DeployLog
 
     def year_calendar(year)
       date_range = range_for(year)
-      output = {}
+      output = (1..52).to_a.map { |w| { w => [] } }
 
       date_range.each do |day|
         output[day.cweek] = {}
-        output[day.cweek][:first] = day
-        # output[day.cweek][:last] = day
+        output[day.cweek][:first] = (day - 7).to_time
+        output[day.cweek][:last] = day.to_time + (24 * 60 * 60) - 1
       end
-      # puts output.inspect
+
       output
     end
   end
