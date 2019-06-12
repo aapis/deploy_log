@@ -37,4 +37,4 @@ return model.merged_between(start, finish) if start
 return model.merged_on(on) if on
 return model.pr_title(title) if title
 return model.pr_for_branch(branch) if branch
-return model.merged_today if title.nil? && branch.nil? && start.nil? && finish.nil?
+return model.merged_today if title.nil? && branch.nil? && start.nil? && finish.nil? && on.nil?
