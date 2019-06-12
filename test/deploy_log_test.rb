@@ -1,39 +1,48 @@
 require "test_helper"
 
 class DeployLogTest < Minitest::Test
-  def test_that_it_has_a_version_number
-    refute_nil ::DeployLog::VERSION
-  end
+  CLI_ARGS = ['aapis/deploy_log'].freeze
 
-  describe '.merged_between' do
+  describe 'something' do
     let(:model) { DeployLog::Github::Deploys.new }
-    let(:start) { '2019-06-11' }
-    let(:finish) { '2019-06-12' }
-    let(:title) { 'Better Tests' }
-    let(:branch) { 'my_branch' }
 
-    it 'finds PRs in the timeframe' do
-      ARGV.replace ['aapis/deploy_log']
+    describe '.merged_between' do
+      let(:start) { '2019-06-11' }
+      let(:finish) { '2019-06-12' }
 
-      assert model.merged_between(start, finish)
+      it 'finds PRs in the timeframe' do
+        ARGV.replace CLI_ARGS
+
+        assert model.merged_between(start, finish)
+      end
     end
 
-    it 'finds PRs in the timeframe' do
-      ARGV.replace ['aapis/deploy_log']
+    describe '.pr_title' do
+      let(:title) { 'Better Tests' }
 
-      assert @model.pr_title(title)
+      it 'finds PRs in the timeframe' do
+        ARGV.replace CLI_ARGS
+
+        assert model.pr_title(title)
+      end
     end
 
-    it 'finds PRs in the timeframe' do
-      ARGV.replace ['aapis/deploy_log']
+    describe '.pr_for_branch' do
+      let(:branch) { 'my_branch' }
 
-      assert @model.pr_for_branch(branch)
+      it 'finds PRs in the timeframe' do
+        ARGV.replace CLI_ARGS
+
+        assert model.pr_for_branch(branch)
+      end
     end
 
-    it 'finds PRs in the timeframe' do
-      ARGV.replace ['aapis/deploy_log']
+    describe '.merged_today' do
+      it 'finds PRs in the timeframe' do
+        ARGV.replace CLI_ARGS
 
-      assert @model.merged_today
+        assert model.merged_today
+      end
     end
   end
 end
