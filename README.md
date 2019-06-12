@@ -30,6 +30,7 @@ Search in any valid date range.
 
 ```bash
 $ deploy_log my/repo --start=2019-06-11 --end=2019-06-12
+$ deploy_log my/repo -s 2019-06-11 -e 2019-06-12
 
 # My PR title (https://github.com/my/repo/pull/1)
 #  - Created by octocat
@@ -46,6 +47,7 @@ Search by PR name.
 
 ```bash
 $ deploy_log my/repo --title="My PR title"
+$ deploy_log my/repo -t "My PR title"
 
 # My PR title (https://github.com/my/repo/pull/1)
 #  - Created by octocat
@@ -62,6 +64,7 @@ Find a PR by branch name.
 
 ```bash
 $ deploy_log my/repo --branch="my_branch"
+$ deploy_log my/repo -b "my_branch"
 
 # My PR title (https://github.com/my/repo/pull/1)
 #  - Created by octocat
@@ -71,6 +74,25 @@ $ deploy_log my/repo --branch="my_branch"
 #
 # ============================================================
 # 1 PR(s) matched
+# ============================================================
+```
+
+Get all PRs merged during a specific week.
+
+```bash
+$ deploy_log my/repo --week="12"
+$ deploy_log my/repo -w 12
+
+# Better Tests (https://github.com/aapis/deploy_log/pull/1)
+#  - Created by aapis
+#  - Branch: my_branch
+#  - Merged by aapis on 12/6/2019 @ 01:45:38pm
+#  - Changes: https://github.com/aapis/deploy_log/pull/1.diff
+#  -- aapis committed 'change file structure to support other providers in the future' at 12/6/2019 @ 01:32:25pm
+#  -- aapis committed 'improve tests' at 12/6/2019 @ 01:45:14pm
+#
+# ============================================================
+# 1 PR(s) merged from 2019-06-09 00:00:00 -0600 to 2019-06-16 23:59:59 -0600
 # ============================================================
 ```
 
