@@ -3,7 +3,7 @@
 
 require 'deploy_log'
 
-start, finish, title, branch = nil
+start, finish, title, branch, on = nil
 
 OptionParser.new do |opt|
   opt.on('-s', '--start=START', 'Start of date range') do |time|
@@ -12,6 +12,10 @@ OptionParser.new do |opt|
 
   opt.on('-e', '--end=END', 'End of date range') do |time|
     finish = Time.parse(time)
+  end
+
+  opt.on('-o', '--on=ON', 'Merged on a specific date') do |time|
+    on = Time.parse(time)
   end
 
   opt.on('-t', '--title=TITLE', 'Title of the PR you want') do |ti|
@@ -30,6 +34,7 @@ end.parse!
 
 model = DeployLog::Github::Deploys.new
 model.merged_between(start, finish) if start
+model.merged_on(on) if on
 model.pr_title(title) if title
 model.pr_for_branch(branch) if branch
 model.merged_today if title.nil? && branch.nil? && start.nil? && finish.nil?
