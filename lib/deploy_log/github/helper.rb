@@ -10,11 +10,9 @@ module DeployLog
 
       LINE_FORMAT = "%s (%s)\n - Created by %s\n - Branch: %s\n - Merged by %s on %s\n - Changes: %s\n -- %s\n\n"
 
-      def initialize(user_repo, force)
+      def initialize(user_repo)
         @client = ::Octokit::Client.new(login: ENV['GITHUB_USER'], password: ENV['GITHUB_TOKEN'])
         @repo_location = user_repo
-        @force = force
-        puts force.inspect
       end
 
       def pulls_in_timeframe(date_start = nil, date_end = nil)
@@ -123,8 +121,6 @@ module DeployLog
       end
 
       def should_show_cache(cache)
-        return false if @force
-
         File.exist?(cache[:path]) && !File.size(cache[:path]).zero?
       end
 
