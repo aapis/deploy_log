@@ -10,7 +10,7 @@ Gem::Specification.new do |spec|
 
   spec.summary       = "Find out what pull requests are merged within a specific timeframe, or search by PR title or branch name"
   spec.description   = "That's prety much it"
-  spec.homepage      = "https://github.com/aapis/deploy_log"
+  spec.homepage      = "https://aapis.github.io/deploy_log/"
   spec.license       = "MIT"
 
   # Specify which files should be added to the gem when it is released.
