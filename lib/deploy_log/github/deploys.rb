@@ -7,10 +7,10 @@ module DeployLog
         @github = Helper.new(ARGV.first)
       end
 
-      def merged_between(start, finish)
-        unless start && finish
-          Notify.error("Start and end dates (--start= and --end=) are required")
-        end
+      def merged_between(start, finish = nil)
+        return Notify.error 'Start (--start=) is a required argument' if start.nil?
+
+        finish = Date.today.to_time + (24 * 60 * 60) - 1 if finish.nil?
 
         @github.pulls_in_timeframe(start, finish)
       end
@@ -23,9 +23,7 @@ module DeployLog
       end
 
       def merged_on(start)
-        unless start
-          Notify.error("Start date (--start=) is required")
-        end
+        return Notify.error 'Start (--start=) is a required argument' if start.nil?
 
         finish = start + 24 * 60 * 60 - 1
 

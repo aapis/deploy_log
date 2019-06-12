@@ -5,6 +5,8 @@ require 'octokit'
 module DeployLog
   module Github
     class Helper
+      LINE_FORMAT = "%s (%s)\n - Created by %s\n - Branch: %s\n - Merged by %s on %s\n - Changes: %s\n\n"
+
       def initialize(user_repo)
         @client = ::Octokit::Client.new(login: ENV['GITHUB_USER'], password: ENV['GITHUB_TOKEN'])
         @repo_location = user_repo
@@ -18,7 +20,6 @@ module DeployLog
           sort: 'long-running'
         )
 
-        pr_format_str = "%s (%s)\n - Created by %s\n - Branch: %s\n - Merged by %s on %s\n - Changes: %s\n\n"
         prs_covered = 0
 
         File.open('/tmp/github-deploys.log', 'w+') do |f|
@@ -29,7 +30,7 @@ module DeployLog
 
             f.write(
               sprintf(
-                pr_format_str,
+                LINE_FORMAT,
                 pr.title,
                 pr.html_url,
                 pr.user.login,
@@ -54,8 +55,6 @@ module DeployLog
           :state => :all,
           :per_page => 100
           )
-        # pr_format_str = "%s (%s)\n - Created by %s\n - Branch: %s\n - Changes: %s\n\n"
-        pr_format_str = "%s (%s)\n - Created by %s\n - Branch: %s\n - Merged by %s on %s\n - Changes: %s\n\n"
         prs_covered = 0
 
         File.open('/tmp/github-deploys.log', 'w+') do |f|
@@ -66,7 +65,7 @@ module DeployLog
 
             f.write(
               sprintf(
-                pr_format_str,
+                LINE_FORMAT,
                 pr.title,
                 pr.html_url,
                 pr.user.login,
