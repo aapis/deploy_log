@@ -1,5 +1,5 @@
 # frozen_string_literal: true
 
 module DeployLog
-  VERSION = '0.1.9a'
+  VERSION = '0.1.9'
 end
