@@ -7,7 +7,7 @@ class DeployLogTest < Minitest::Test
     let(:model) { DeployLog::Github::Deploys.new }
 
     describe '.merged_between' do
-      let(:start) { '2019-06-11' }
+      let(:start) { '2019-06-12' }
       let(:finish) { '2019-06-12' }
 
       it 'finds PRs in the timeframe' do
