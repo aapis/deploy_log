@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+<meta charset="UTF-8">
+
+<title>deploy_log.gemspec - RDoc Documentation</title>
+
+<script type="text/javascript">
+  var rdoc_rel_prefix = "./";
+  var index_rel_prefix = "./";
+</script>
+
+<script src="./js/jquery.js"></script>
+<script src="./js/darkfish.js"></script>
+
+<link href="./css/fonts.css" rel="stylesheet">
+<link href="./css/rdoc.css" rel="stylesheet">
+
+
+
+
+<body id="top" role="document" class="file">
+<nav role="navigation">
+  <div id="project-navigation">
+    <div id="home-section" role="region" title="Quick navigation" class="nav-section">
+  <h2>
+    <a href="./index.html" rel="home">Home</a>
+  </h2>
+
+  <div id="table-of-contents-navigation">
+    <a href="./table_of_contents.html#pages">Pages</a>
+    <a href="./table_of_contents.html#classes">Classes</a>
+    <a href="./table_of_contents.html#methods">Methods</a>
+  </div>
+</div>
+
+    <div id="search-section" role="search" class="project-section initially-hidden">
+  <form action="#" method="get" accept-charset="utf-8">
+    <div id="search-field-wrapper">
+      <input id="search-field" role="combobox" aria-label="Search"
+             aria-autocomplete="list" aria-controls="search-results"
+             type="text" name="search" placeholder="Search" spellcheck="false"
+             title="Type to search, Up and Down to navigate, Enter to load">
+    </div>
+
+    <ul id="search-results" aria-label="Search Results"
+        aria-busy="false" aria-expanded="false"
+        aria-atomic="false" class="initially-hidden"></ul>
+  </form>
+</div>
+
+  </div>
+
+  
+
+  <div id="project-metadata">
+    <div id="fileindex-section" class="nav-section">
+  <h3>Pages</h3>
+
+  <ul class="link-list">
+  
+    <li><a href="./CODE_OF_CONDUCT_md.html">CODE_OF_CONDUCT</a>
+  
+    <li><a href="./Gemfile.html">Gemfile</a>
+  
+    <li><a href="./LICENSE_txt.html">LICENSE</a>
+  
+    <li><a href="./README_md.html">README</a>
+  
+    <li><a href="./Rakefile.html">Rakefile</a>
+  
+    <li><a href="./bin/setup.html">setup</a>
+  
+    <li><a href="./deploy_log_gemspec.html">deploy_log.gemspec</a>
+  
+  </ul>
+</div>
+
+  </div>
+</nav>
+
+<main role="main" aria-label="Page deploy_log.gemspec">
+
+<p>lib = File.expand_path(“../lib”, __FILE__) $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib) require “deploy_log/version”</p>
+
+<p>Gem::Specification.new do |spec|</p>
+
+<pre class="ruby"><span class="ruby-identifier">spec</span>.<span class="ruby-identifier">name</span>          = <span class="ruby-string">&quot;deploy_log&quot;</span>
+<span class="ruby-identifier">spec</span>.<span class="ruby-identifier">version</span>       = <span class="ruby-constant">DeployLog</span><span class="ruby-operator">::</span><span class="ruby-constant">VERSION</span>
+<span class="ruby-identifier">spec</span>.<span class="ruby-identifier">authors</span>       = [<span class="ruby-string">&quot;Ryan Priebe&quot;</span>]
+<span class="ruby-identifier">spec</span>.<span class="ruby-identifier">email</span>         = [<span class="ruby-string">&quot;rpriebe@me.com&quot;</span>]
+
+<span class="ruby-identifier">spec</span>.<span class="ruby-identifier">summary</span>       = <span class="ruby-string">&quot;Find out what pull requests are merged within a specific timeframe, or search by PR title or branch name&quot;</span>
+<span class="ruby-identifier">spec</span>.<span class="ruby-identifier">description</span>   = <span class="ruby-string">&quot;That&#39;s prety much it&quot;</span>
+<span class="ruby-identifier">spec</span>.<span class="ruby-identifier">homepage</span>      = <span class="ruby-string">&quot;https://github.com/aapis/deploy_log&quot;</span>
+<span class="ruby-identifier">spec</span>.<span class="ruby-identifier">license</span>       = <span class="ruby-string">&quot;MIT&quot;</span>
+
+<span class="ruby-comment"># Specify which files should be added to the gem when it is released.</span>
+<span class="ruby-comment"># The `git ls-files -z` loads the files in the RubyGem that have been added into git.</span>
+<span class="ruby-identifier">spec</span>.<span class="ruby-identifier">files</span>         = <span class="ruby-constant">Dir</span>.<span class="ruby-identifier">chdir</span>(<span class="ruby-constant">File</span>.<span class="ruby-identifier">expand_path</span>(<span class="ruby-string">&#39;..&#39;</span>, <span class="ruby-keyword">__FILE__</span>)) <span class="ruby-keyword">do</span>
+  <span class="ruby-string">`git ls-files -z`</span>.<span class="ruby-identifier">split</span>(<span class="ruby-string">&quot;\x0&quot;</span>).<span class="ruby-identifier">reject</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">f</span><span class="ruby-operator">|</span> <span class="ruby-identifier">f</span>.<span class="ruby-identifier">match</span>(<span class="ruby-regexp">%r{^(test|spec|features)/}</span>) }
+<span class="ruby-keyword">end</span>
+<span class="ruby-identifier">spec</span>.<span class="ruby-identifier">executables</span>   = <span class="ruby-string">&#39;deploy_log&#39;</span>
+<span class="ruby-identifier">spec</span>.<span class="ruby-identifier">require_paths</span> = [<span class="ruby-string">&#39;lib&#39;</span>]
+
+<span class="ruby-identifier">spec</span>.<span class="ruby-identifier">add_development_dependency</span> <span class="ruby-string">&#39;bundler&#39;</span>, <span class="ruby-string">&#39;~&gt; 2.0&#39;</span>
+<span class="ruby-identifier">spec</span>.<span class="ruby-identifier">add_development_dependency</span> <span class="ruby-string">&#39;rake&#39;</span>, <span class="ruby-string">&#39;~&gt; 10.0&#39;</span>
+<span class="ruby-identifier">spec</span>.<span class="ruby-identifier">add_runtime_dependency</span> <span class="ruby-string">&#39;notifaction&#39;</span>, <span class="ruby-string">&#39;~&gt; 0.4.4&#39;</span>
+<span class="ruby-identifier">spec</span>.<span class="ruby-identifier">add_development_dependency</span> <span class="ruby-string">&#39;minitest&#39;</span>, <span class="ruby-string">&#39;~&gt; 5.0&#39;</span>
+<span class="ruby-identifier">spec</span>.<span class="ruby-identifier">add_runtime_dependency</span> <span class="ruby-string">&#39;octokit&#39;</span>, <span class="ruby-string">&#39;~&gt; 4.0&#39;</span>
+</pre>
+
+<p>end</p>
+
+</main>
+
+
+
+<footer id="validator-badges" role="contentinfo">
+  <p><a href="https://validator.w3.org/check/referer">Validate</a>
+  <p>Generated by <a href="https://ruby.github.io/rdoc/">RDoc</a> 6.1.0.
+  <p>Based on <a href="http://deveiate.org/projects/Darkfish-RDoc/">Darkfish</a> by <a href="http://deveiate.org">Michael Granger</a>.
+</footer>
+

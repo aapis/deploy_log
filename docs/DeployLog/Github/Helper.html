@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+<meta charset="UTF-8">
+
+<title>class DeployLog::Github::Helper - RDoc Documentation</title>
+
+<script type="text/javascript">
+  var rdoc_rel_prefix = "../../";
+  var index_rel_prefix = "../../";
+</script>
+
+<script src="../../js/jquery.js"></script>
+<script src="../../js/darkfish.js"></script>
+
+<link href="../../css/fonts.css" rel="stylesheet">
+<link href="../../css/rdoc.css" rel="stylesheet">
+
+
+
+
+<body id="top" role="document" class="class">
+<nav role="navigation">
+  <div id="project-navigation">
+    <div id="home-section" role="region" title="Quick navigation" class="nav-section">
+  <h2>
+    <a href="../../index.html" rel="home">Home</a>
+  </h2>
+
+  <div id="table-of-contents-navigation">
+    <a href="../../table_of_contents.html#pages">Pages</a>
+    <a href="../../table_of_contents.html#classes">Classes</a>
+    <a href="../../table_of_contents.html#methods">Methods</a>
+  </div>
+</div>
+
+    <div id="search-section" role="search" class="project-section initially-hidden">
+  <form action="#" method="get" accept-charset="utf-8">
+    <div id="search-field-wrapper">
+      <input id="search-field" role="combobox" aria-label="Search"
+             aria-autocomplete="list" aria-controls="search-results"
+             type="text" name="search" placeholder="Search" spellcheck="false"
+             title="Type to search, Up and Down to navigate, Enter to load">
+    </div>
+
+    <ul id="search-results" aria-label="Search Results"
+        aria-busy="false" aria-expanded="false"
+        aria-atomic="false" class="initially-hidden"></ul>
+  </form>
+</div>
+
+  </div>
+
+  
+
+  <div id="class-metadata">
+    
+    <div id="parent-class-section" class="nav-section">
+  <h3>Parent</h3>
+
+  
+  <p class="link">Object
+  
+</div>
+
+    
+    
+    <!-- Method Quickref -->
+<div id="method-list-section" class="nav-section">
+  <h3>Methods</h3>
+
+  <ul class="link-list" role="directory">
+    
+    <li ><a href="#method-c-new">::new</a>
+    
+    <li ><a href="#method-i-pulls_in_timeframe">#pulls_in_timeframe</a>
+    
+    <li ><a href="#method-i-search_pulls_by">#search_pulls_by</a>
+    
+  </ul>
+</div>
+
+  </div>
+</nav>
+
+<main role="main" aria-labelledby="class-DeployLog::Github::Helper">
+  <h1 id="class-DeployLog::Github::Helper" class="class">
+    class DeployLog::Github::Helper
+  </h1>
+
+  <section class="description">
+    
+  </section>
+
+  
+  <section id="5Buntitled-5D" class="documentation-section">
+    
+
+    
+
+    
+    <section class="constants-list">
+      <header>
+        <h3>Constants</h3>
+      </header>
+      <dl>
+      
+        <dt id="LINE_FORMAT">LINE_FORMAT
+        
+        <dd>
+        
+      
+      </dl>
+    </section>
+    
+
+    
+
+    
+     <section id="public-class-5Buntitled-5D-method-details" class="method-section">
+       <header>
+         <h3>Public Class Methods</h3>
+       </header>
+
+    
+      <div id="method-c-new" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">new</span><span
+            class="method-args">(user_repo)</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          
+          
+          
+
+          
+          <div class="method-source-code" id="new-source">
+            <pre><span class="ruby-comment"># File lib/deploy_log/github/helper.rb, line 10</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">initialize</span>(<span class="ruby-identifier">user_repo</span>)
+  <span class="ruby-ivar">@client</span> = <span class="ruby-operator">::</span><span class="ruby-constant">Octokit</span><span class="ruby-operator">::</span><span class="ruby-constant">Client</span>.<span class="ruby-identifier">new</span>(<span class="ruby-value">login:</span> <span class="ruby-constant">ENV</span>[<span class="ruby-string">&#39;GITHUB_USER&#39;</span>], <span class="ruby-value">password:</span> <span class="ruby-constant">ENV</span>[<span class="ruby-string">&#39;GITHUB_TOKEN&#39;</span>])
+  <span class="ruby-ivar">@repo_location</span> = <span class="ruby-identifier">user_repo</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+    </section>
+  
+     <section id="public-instance-5Buntitled-5D-method-details" class="method-section">
+       <header>
+         <h3>Public Instance Methods</h3>
+       </header>
+
+    
+      <div id="method-i-pulls_in_timeframe" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">pulls_in_timeframe</span><span
+            class="method-args">(date_start = nil, date_end = nil)</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          
+          
+          
+
+          
+          <div class="method-source-code" id="pulls_in_timeframe-source">
+            <pre><span class="ruby-comment"># File lib/deploy_log/github/helper.rb, line 15</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">pulls_in_timeframe</span>(<span class="ruby-identifier">date_start</span> = <span class="ruby-keyword">nil</span>, <span class="ruby-identifier">date_end</span> = <span class="ruby-keyword">nil</span>)
+  <span class="ruby-ivar">@client</span>.<span class="ruby-identifier">auto_paginate</span> = <span class="ruby-keyword">true</span>
+  <span class="ruby-identifier">list</span> = <span class="ruby-ivar">@client</span>.<span class="ruby-identifier">pull_requests</span>(<span class="ruby-ivar">@repo_location</span>,
+    <span class="ruby-value">state:</span> <span class="ruby-value">:closed</span>,
+    <span class="ruby-value">per_page:</span> <span class="ruby-value">500</span>,
+    <span class="ruby-value">sort:</span> <span class="ruby-string">&#39;long-running&#39;</span>
+  )
+
+  <span class="ruby-identifier">prs_covered</span> = <span class="ruby-value">0</span>
+
+  <span class="ruby-constant">File</span>.<span class="ruby-identifier">open</span>(<span class="ruby-string">&#39;/tmp/github-deploys.log&#39;</span>, <span class="ruby-string">&#39;w+&#39;</span>) <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">f</span><span class="ruby-operator">|</span>
+    <span class="ruby-identifier">list</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">pr</span><span class="ruby-operator">|</span>
+      <span class="ruby-keyword">next</span> <span class="ruby-keyword">unless</span> (<span class="ruby-identifier">date_start</span><span class="ruby-operator">..</span><span class="ruby-identifier">date_end</span>).<span class="ruby-identifier">cover?</span> <span class="ruby-identifier">pr</span>.<span class="ruby-identifier">merged_at</span>
+
+      <span class="ruby-identifier">prs_covered</span> <span class="ruby-operator">+=</span> <span class="ruby-value">1</span>
+
+      <span class="ruby-identifier">f</span>.<span class="ruby-identifier">write</span>(
+        <span class="ruby-identifier">sprintf</span>(
+          <span class="ruby-constant">LINE_FORMAT</span>,
+          <span class="ruby-identifier">pr</span>.<span class="ruby-identifier">title</span>,
+          <span class="ruby-identifier">pr</span>.<span class="ruby-identifier">html_url</span>,
+          <span class="ruby-identifier">pr</span>.<span class="ruby-identifier">user</span>.<span class="ruby-identifier">login</span>,
+          <span class="ruby-identifier">pr</span>.<span class="ruby-identifier">head</span>.<span class="ruby-identifier">ref</span>,
+          <span class="ruby-identifier">user_who_merged</span>(<span class="ruby-identifier">pr</span>.<span class="ruby-identifier">number</span>),
+          <span class="ruby-identifier">formatted_time</span>(<span class="ruby-identifier">pr</span>.<span class="ruby-identifier">merged_at</span>, <span class="ruby-keyword">true</span>),
+          <span class="ruby-identifier">pr</span>.<span class="ruby-identifier">diff_url</span>,
+          <span class="ruby-identifier">committers_for</span>(<span class="ruby-identifier">pr</span>.<span class="ruby-identifier">number</span>).<span class="ruby-identifier">join</span>(<span class="ruby-string">&quot;\n -- &quot;</span>)
+        )
+      )
+    <span class="ruby-keyword">end</span>
+
+    <span class="ruby-identifier">f</span>.<span class="ruby-identifier">write</span>(<span class="ruby-node">&quot;============================================================\n#{prs_covered} PR(s) merged from #{date_start} to #{date_end}\n============================================================\n&quot;</span>)
+  <span class="ruby-keyword">end</span>
+
+  <span class="ruby-keyword">return</span> <span class="ruby-operator">::</span><span class="ruby-constant">Notify</span>.<span class="ruby-identifier">warning</span>(<span class="ruby-node">&quot;No pull requests have been merged in the requested date range (#{date_start} - #{date_end})&quot;</span>) <span class="ruby-keyword">if</span> <span class="ruby-identifier">prs_covered</span>.<span class="ruby-identifier">zero?</span>
+
+  <span class="ruby-identifier">system</span>(<span class="ruby-string">&#39;cat /tmp/github-deploys.log&#39;</span>)
+<span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+      <div id="method-i-search_pulls_by" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">search_pulls_by</span><span
+            class="method-args">(value, field = :title)</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          
+          
+          
+
+          
+          <div class="method-source-code" id="search_pulls_by-source">
+            <pre><span class="ruby-comment"># File lib/deploy_log/github/helper.rb, line 54</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">search_pulls_by</span>(<span class="ruby-identifier">value</span>, <span class="ruby-identifier">field</span> = <span class="ruby-value">:title</span>)
+  <span class="ruby-identifier">list</span> = <span class="ruby-ivar">@client</span>.<span class="ruby-identifier">pull_requests</span>(<span class="ruby-ivar">@repo_location</span>,
+    <span class="ruby-value">:state</span> <span class="ruby-operator">=&gt;</span> <span class="ruby-value">:all</span>,
+    <span class="ruby-value">:per_page</span> <span class="ruby-operator">=&gt;</span> <span class="ruby-value">100</span>
+    )
+  <span class="ruby-identifier">prs_covered</span> = <span class="ruby-value">0</span>
+
+  <span class="ruby-constant">File</span>.<span class="ruby-identifier">open</span>(<span class="ruby-string">&#39;/tmp/github-deploys.log&#39;</span>, <span class="ruby-string">&#39;w+&#39;</span>) <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">f</span><span class="ruby-operator">|</span>
+    <span class="ruby-identifier">list</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">pr</span><span class="ruby-operator">|</span>
+      <span class="ruby-keyword">next</span> <span class="ruby-keyword">unless</span> <span class="ruby-identifier">nested_hash_value</span>(<span class="ruby-identifier">pr</span>, <span class="ruby-identifier">field</span>).<span class="ruby-identifier">match?</span>(<span class="ruby-regexp">/#{value}\b/</span>)
+
+      <span class="ruby-identifier">prs_covered</span> <span class="ruby-operator">+=</span> <span class="ruby-value">1</span>
+
+      <span class="ruby-identifier">f</span>.<span class="ruby-identifier">write</span>(
+        <span class="ruby-identifier">sprintf</span>(
+          <span class="ruby-constant">LINE_FORMAT</span>,
+          <span class="ruby-identifier">pr</span>.<span class="ruby-identifier">title</span>,
+          <span class="ruby-identifier">pr</span>.<span class="ruby-identifier">html_url</span>,
+          <span class="ruby-identifier">pr</span>.<span class="ruby-identifier">user</span>.<span class="ruby-identifier">login</span>,
+          <span class="ruby-identifier">pr</span>.<span class="ruby-identifier">head</span>.<span class="ruby-identifier">ref</span>,
+          <span class="ruby-identifier">user_who_merged</span>(<span class="ruby-identifier">pr</span>.<span class="ruby-identifier">number</span>),
+          <span class="ruby-identifier">formatted_time</span>(<span class="ruby-identifier">pr</span>.<span class="ruby-identifier">merged_at</span>, <span class="ruby-keyword">true</span>),
+          <span class="ruby-identifier">pr</span>.<span class="ruby-identifier">diff_url</span>,
+          <span class="ruby-identifier">committers_for</span>(<span class="ruby-identifier">pr</span>.<span class="ruby-identifier">number</span>).<span class="ruby-identifier">join</span>(<span class="ruby-string">&quot;\n -- &quot;</span>)
+        )
+      )
+    <span class="ruby-keyword">end</span>
+
+    <span class="ruby-identifier">f</span>.<span class="ruby-identifier">write</span>(<span class="ruby-node">&quot;============================================================\n#{prs_covered} PR(s) matched\n============================================================\n&quot;</span>)
+  <span class="ruby-keyword">end</span>
+
+  <span class="ruby-keyword">return</span> <span class="ruby-operator">::</span><span class="ruby-constant">Notify</span>.<span class="ruby-identifier">warning</span>(<span class="ruby-node">&quot;No pull requests match the requested term (#{value})&quot;</span>) <span class="ruby-keyword">if</span> <span class="ruby-identifier">prs_covered</span>.<span class="ruby-identifier">zero?</span>
+
+  <span class="ruby-identifier">system</span>(<span class="ruby-string">&#39;cat /tmp/github-deploys.log&#39;</span>)
+<span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+    </section>
+  
+  </section>
+
+</main>
+
+
+<footer id="validator-badges" role="contentinfo">
+  <p><a href="https://validator.w3.org/check/referer">Validate</a>
+  <p>Generated by <a href="https://ruby.github.io/rdoc/">RDoc</a> 6.1.0.
+  <p>Based on <a href="http://deveiate.org/projects/Darkfish-RDoc/">Darkfish</a> by <a href="http://deveiate.org">Michael Granger</a>.
+</footer>
+
