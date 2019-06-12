@@ -1,0 +1,39 @@
+#! /usr/bin/env ruby
+# frozen_string_literal: true
+
+require 'notifaction'
+require 'octokit'
+require 'optionparser'
+require 'time'
+require 'deploy_log'
+
+start, finish, title, branch = nil
+
+OptionParser.new do |opt|
+  opt.on('-s', '--start=START', 'Start of date range') do |time|
+    start = Time.parse(time)
+  end
+
+  opt.on('-e', '--end=END', 'End of date range') do |time|
+    finish = Time.parse(time)
+  end
+
+  opt.on('-t', '--title=TITLE', 'Title of the PR you want') do |ti|
+    title = ti
+  end
+
+  opt.on('-b', '--branch=BRANCH', 'Name of the branch you want') do |br|
+    branch = br
+  end
+
+  opt.on('-v', '--version', 'Prints version information') do
+    puts DeployLog::VERSION
+    exit
+  end
+end.parse!
+
+model = GithubDeploys.new
+model.merged_between(start, finish) if start && finish
+model.pr_title(title) if title
+model.pr_for_branch(branch) if branch
+model.merged_today if title.nil? && branch.nil? && start.nil? && finish.nil?
