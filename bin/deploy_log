@@ -31,7 +31,7 @@ OptionParser.new do |opt|
   end
 
   opt.on('-c', '--clean', 'Pull data from api, ignore cache') do
-    FileUtils.rm '/tmp/github-deploys-*.log'
+    Dir.glob('/tmp/github-deploys-*.log').each { |file| FileUtils.rm file }
     Notify.info 'Cleared cache'
     exit
   end
