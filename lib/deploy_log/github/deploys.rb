@@ -13,14 +13,14 @@ module DeployLog
 
         finish = Date.today.to_time + (24 * 60 * 60) - 1 if finish.nil?
 
-        @github.pulls_in_timeframe(start, finish)
+        render @github.pulls_in_timeframe(start, finish)
       end
 
       def merged_today
         start = Date.today.to_time # 12:00AM this morning
         finish = Date.today.to_time + (24 * 60 * 60) - 1 # 11:59PM tonight
 
-        @github.pulls_in_timeframe(start, finish)
+        render @github.pulls_in_timeframe(start, finish)
       end
 
       def merged_on(start)
@@ -28,7 +28,7 @@ module DeployLog
 
         finish = start + 24 * 60 * 60 - 1
 
-        @github.pulls_in_timeframe(start, finish)
+        render @github.pulls_in_timeframe(start, finish)
       end
 
       def merged_during_week(week_num)
@@ -36,15 +36,21 @@ module DeployLog
 
         week = @calendar.week(week_num.to_i)
 
-        @github.pulls_in_timeframe(week[:first], week[:last])
+        render @github.pulls_in_timeframe(week[:first], week[:last])
       end
 
       def pr_title(title)
-        @github.search_pulls_by(title, :title)
+        render @github.search_pulls_by(title, :title)
       end
 
       def pr_for_branch(branch)
-        @github.search_pulls_by(branch, :ref)
+        render @github.search_pulls_by(branch, :ref)
+      end
+
+      private
+
+      def render(data)
+        puts data
       end
     end
   end

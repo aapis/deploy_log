@@ -5,6 +5,8 @@ require 'fileutils'
 
 module DeployLog
   module Github
+    class FileNotFound < StandardError; end
+
     class Helper
       LINE_FORMAT = "%s (%s)\n - Created by %s\n - Branch: %s\n - Merged by %s on %s\n - Changes: %s\n -- %s\n\n"
 
@@ -14,8 +16,8 @@ module DeployLog
       end
 
       def pulls_in_timeframe(date_start = nil, date_end = nil)
-        cache = cache_file(date_start, date_end)
-        return cache[:contents] if should_show_cache(cache)
+        cache_path = cache(date_start, date_end)
+        return cat(cache_path) if should_show_cache(cache_path)
 
         @client.auto_paginate = true
         list = @client.pull_requests(@repo_location,
@@ -26,7 +28,7 @@ module DeployLog
 
         prs_covered = 0
 
-        File.open(cache[:path], 'w+') do |f|
+        File.open(cache_path, 'w+') do |f|
           list.each do |pr|
             next unless (date_start..date_end).cover? pr.merged_at
 
@@ -52,12 +54,12 @@ module DeployLog
 
         return ::Notify.warning("No pull requests have been merged in the requested date range (#{date_start} - #{date_end})") if prs_covered.zero?
 
-        cache[:contents]
+        cat(cache_path)
       end
 
       def search_pulls_by(value, field = :title)
-        cache = cache_file(value, field)
-        return cache[:contents] if should_show_cache(cache)
+        cache_path = cache_file(value, field)
+        return cat(cache_path) if should_show_cache(cache_path)
 
         list = @client.pull_requests(@repo_location,
           :state => :all,
@@ -65,7 +67,7 @@ module DeployLog
           )
         prs_covered = 0
 
-        File.open(cache[:path], 'w+') do |f|
+        File.open(cache_path, 'w+') do |f|
           list.each do |pr|
             next unless nested_hash_value(pr, field).match?(/#{value}\b/)
 
@@ -91,7 +93,7 @@ module DeployLog
 
         return ::Notify.warning("No pull requests match the requested term (#{value})") if prs_covered.zero?
 
-        cache[:contents]
+        cat(cache_path)
       end
 
       private
@@ -108,18 +110,21 @@ module DeployLog
         end
       end
 
-      def cache_file(*args)
+      def cache(*args)
         hash = Digest::MD5.hexdigest(@repo_location + args.join('|'))
         path = FileUtils.touch "/tmp/github-deploys-#{hash}.log"
 
-        {
-          contents: system("cat #{path.first}"),
-          path: path.first
-        }
+        path.first
       end
 
-      def should_show_cache(cache)
-        File.exist?(cache[:path]) && !File.size(cache[:path]).zero?
+      def should_show_cache(cache_file_path)
+        File.exist?(cache_file_path) && !File.size(cache_file_path).zero?
+      end
+
+      def cat(path)
+        raise FileNotFound unless should_show_cache(path)
+
+        File.read(path)
       end
 
       def formatted_time(time, use_local_time = false)
