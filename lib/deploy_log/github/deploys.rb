@@ -5,7 +5,6 @@ module DeployLog
     class Deploys
       def initialize
         @github = Helper.new(ARGV.first)
-        @calendar = DeployLog::Calendar.new
       end
 
       def merged_between(start, finish = nil)
@@ -34,7 +33,8 @@ module DeployLog
       def merged_during_week(week_num)
         return Notify.error 'Week number (--week|-w) is a required argument' if week_num.nil?
 
-        week = @calendar.week(week_num.to_i)
+        calendar = DeployLog::Calendar.new
+        week = calendar.week(week_num.to_i)
 
         render @github.pulls_in_timeframe(week[:first], week[:last])
       end
@@ -50,7 +50,7 @@ module DeployLog
       private
 
       def render(data)
-        puts data
+        puts data if data.is_a? String
       end
     end
   end
