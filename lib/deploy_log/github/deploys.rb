@@ -51,6 +51,7 @@ module DeployLog
 
       def render(data)
         puts data if data.is_a? String
+        data
       end
     end
   end

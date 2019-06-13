@@ -58,7 +58,7 @@ module DeployLog
       end
 
       def search_pulls_by(value, field = :title)
-        cache_path = cache_file(value, field)
+        cache_path = cache(value, field)
         return cat(cache_path) if should_show_cache(cache_path)
 
         list = @client.pull_requests(@repo_location,

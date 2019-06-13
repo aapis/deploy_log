@@ -20,7 +20,7 @@ class DeployLogTest < Minitest::Test
     describe '.pr_title' do
       let(:title) { 'Better Tests' }
 
-      it 'finds PRs in the timeframe' do
+      it 'finds PR with the requested title' do
         ARGV.replace CLI_ARGS
 
         assert model.pr_title(title)
@@ -30,7 +30,7 @@ class DeployLogTest < Minitest::Test
     describe '.pr_for_branch' do
       let(:branch) { 'my_branch' }
 
-      it 'finds PRs in the timeframe' do
+      it 'finds PR for the requested branch' do
         ARGV.replace CLI_ARGS
 
         assert model.pr_for_branch(branch)
@@ -38,7 +38,7 @@ class DeployLogTest < Minitest::Test
     end
 
     describe '.merged_today' do
-      it 'finds PRs in the timeframe' do
+      it 'finds PRs merged today' do
         ARGV.replace CLI_ARGS
 
         assert model.merged_today
@@ -46,7 +46,7 @@ class DeployLogTest < Minitest::Test
     end
 
     describe '.merged_during_week' do
-      it 'finds PRs in the timeframe' do
+      it 'finds PRs merged this week' do
         ARGV.replace CLI_ARGS
 
         assert model.merged_during_week(24)
