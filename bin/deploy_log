@@ -26,6 +26,10 @@ OptionParser.new do |opt|
     branch = br
   end
 
+  opt.on('-u', '--user=USER', 'Name of the Github user you want to search by') do |br|
+    branch = br
+  end
+
   opt.on('-w', '--week=WEEK', 'Get PRs merged during week number X') do |w|
     week = w
   end

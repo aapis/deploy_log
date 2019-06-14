@@ -1,130 +1,87 @@
 # frozen_string_literal: true
 
-require 'octokit'
 require 'fileutils'
 
 module DeployLog
   module Github
-    class FileNotFound < StandardError; end
-
     class Helper
       LINE_FORMAT = "%s (%s)\n - Created by %s\n - Branch: %s\n - Merged by %s on %s\n - Changes: %s\n -- %s\n\n"
 
       def initialize(user_repo)
-        @client = ::Octokit::Client.new(login: ENV['GITHUB_USER'], password: ENV['GITHUB_TOKEN'])
-        @repo_location = user_repo
+        @api = Api.new(user_repo)
+        @cache = DeployLog::Cache.new('github-deploys-%s.log', repo: user_repo)
       end
 
-      def pulls_in_timeframe(date_start = nil, date_end = nil)
-        cache_path = cache(date_start, date_end)
-        return cat(cache_path) if should_show_cache(cache_path)
+      def pulls_in_timeframe(date_start, date_end)
+        @cache.create(date_start, date_end)
+        return @cache.contents if @cache.exists?
 
-        @client.auto_paginate = true
-        list = @client.pull_requests(@repo_location,
-          state: :closed,
-          per_page: 500,
-          sort: 'long-running'
-        )
+        pool = timeframe_pool(date_start, date_end)
+        message = "#{pool.size} PR(s) merged from #{date_start} to #{date_end}"
 
-        prs_covered = 0
-
-        File.open(cache_path, 'w+') do |f|
-          list.each do |pr|
-            next unless (date_start..date_end).cover? pr.merged_at
-
-            prs_covered += 1
-
-            f.write(
-              sprintf(
-                LINE_FORMAT,
-                pr.title,
-                pr.html_url,
-                pr.user.login,
-                pr.head.ref,
-                user_who_merged(pr.number),
-                formatted_time(pr.merged_at, true),
-                pr.diff_url,
-                committers_for(pr.number).join("\n -- ")
-              )
-            )
-          end
-
-          f.write("============================================================\n#{prs_covered} PR(s) merged from #{date_start} to #{date_end}\n============================================================\n")
+        @cache.write_object(pool, message) do |item|
+          format(LINE_FORMAT,
+            item.title,
+            item.html_url,
+            item.user.login,
+            item.head.ref,
+            user_who_merged(item.number),
+            formatted_time(item.merged_at, true),
+            item.diff_url,
+            committers_for(item.number).join("\n -- ")
+          )
         end
 
-        return ::Notify.warning("No pull requests have been merged in the requested date range (#{date_start} - #{date_end})") if prs_covered.zero?
-
-        cat(cache_path)
+        @cache.contents
       end
 
       def search_pulls_by(value, field = :title)
-        cache_path = cache(value, field)
-        return cat(cache_path) if should_show_cache(cache_path)
+        @cache.create(field, value)
+        return @cache.contents if @cache.exists?
 
-        list = @client.pull_requests(@repo_location,
-          :state => :all,
-          :per_page => 100
+        pool = search_pool(field, value)
+        message = "#{pool.size} PR(s) matched"
+
+        @cache.write_object(pool, message) do |item|
+          format(LINE_FORMAT,
+            item.title,
+            item.html_url,
+            item.user.login,
+            item.head.ref,
+            user_who_merged(item.number),
+            formatted_time(item.merged_at, true),
+            item.diff_url,
+            committers_for(item.number).join("\n -- ")
           )
-        prs_covered = 0
-
-        File.open(cache_path, 'w+') do |f|
-          list.each do |pr|
-            next unless nested_hash_value(pr, field).match?(/#{value}\b/)
-
-            prs_covered += 1
-
-            f.write(
-              sprintf(
-                LINE_FORMAT,
-                pr.title,
-                pr.html_url,
-                pr.user.login,
-                pr.head.ref,
-                user_who_merged(pr.number),
-                formatted_time(pr.merged_at, true),
-                pr.diff_url,
-                committers_for(pr.number).join("\n -- ")
-              )
-            )
-          end
-
-          f.write("============================================================\n#{prs_covered} PR(s) matched\n============================================================\n")
         end
 
-        return ::Notify.warning("No pull requests match the requested term (#{value})") if prs_covered.zero?
-
-        cat(cache_path)
+        @cache.contents
       end
 
       private
 
+      def timeframe_pool(date_start, date_end)
+        pool = @api.pull_requests
+        pool.select! { |pr| (date_start..date_end).cover?(pr.merged_at) }
+        pool
+      end
+
+      def search_pool(field, value)
+        pool = @api.pull_requests(state: :all, per_page: 100)
+        pool.select! { |pr| nested_hash_value(pr, field).match?(/#{value}\b/) }
+        pool
+      end
+
       def user_who_merged(num)
-        pr = @client.pull_request(@repo_location, num)
+        pr = @api.pull_request(num)
         pr.merged_by.login
       end
 
       def committers_for(num)
-        commits = @client.pull_request_commits(@repo_location, num)
+        commits = @api.commits_for(num)
         commits.map do |c|
           "#{c.author.login} committed '#{c.commit.message}' at #{formatted_time(c.commit.committer.date, true)}"
         end
-      end
-
-      def cache(*args)
-        hash = Digest::MD5.hexdigest(@repo_location + args.join('|'))
-        path = FileUtils.touch "/tmp/github-deploys-#{hash}.log"
-
-        path.first
-      end
-
-      def should_show_cache(cache_file_path)
-        File.exist?(cache_file_path) && !File.size(cache_file_path).zero?
-      end
-
-      def cat(path)
-        raise FileNotFound unless should_show_cache(path)
-
-        File.read(path)
       end
 
       def formatted_time(time, use_local_time = false)
