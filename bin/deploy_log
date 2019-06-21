@@ -10,7 +10,6 @@ options[:title] = nil
 options[:branch] = nil
 options[:on] = nil
 options[:week] = Date.today.cweek
-puts options.inspect
 
 OptionParser.new do |opt|
   opt.on('-s', '--start=START', 'Start of date range') do |time|
@@ -37,7 +36,7 @@ OptionParser.new do |opt|
     options[:user] = u
   end
 
-  opt.on('-w', '--week', 'Get PRs merged during week number X') do |w|
+  opt.on('-w', '--week=WEEK', 'Get PRs merged during week number X') do |w|
     options[:week] = w
   end
 
