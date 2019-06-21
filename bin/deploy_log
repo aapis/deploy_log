@@ -3,35 +3,42 @@
 
 require 'deploy_log'
 
-start, finish, title, branch, on, week = nil
+options = {}
+options[:start] = nil
+options[:finish] = nil
+options[:title] = nil
+options[:branch] = nil
+options[:on] = nil
+options[:week] = Date.today.cweek
+puts options.inspect
 
 OptionParser.new do |opt|
   opt.on('-s', '--start=START', 'Start of date range') do |time|
-    start = Time.parse(time)
+    options[:start] = Time.parse(time)
   end
 
   opt.on('-e', '--end=END', 'End of date range') do |time|
-    finish = Time.parse(time)
+    options[:finish] = Time.parse(time)
   end
 
   opt.on('-o', '--on=ON', 'Merged on a specific date') do |time|
-    on = Time.parse(time)
+    options[:on] = Time.parse(time)
   end
 
   opt.on('-t', '--title=TITLE', 'Title of the PR you want') do |ti|
-    title = ti
+    options[:title] = ti
   end
 
   opt.on('-b', '--branch=BRANCH', 'Name of the branch you want') do |br|
-    branch = br
+    options[:branch] = br
   end
 
-  opt.on('-u', '--user=USER', 'Name of the Github user you want to search by') do |br|
-    branch = br
+  opt.on('-u', '--user=USER', 'Name of the Github user you want to search by') do |u|
+    options[:user] = u
   end
 
-  opt.on('-w', '--week=WEEK', 'Get PRs merged during week number X') do |w|
-    week = w
+  opt.on('-w', '--week', 'Get PRs merged during week number X') do |w|
+    options[:week] = w
   end
 
   opt.on('-c', '--clean', 'Pull data from api, ignore cache') do
@@ -48,9 +55,9 @@ end.parse!
 
 model = DeployLog::Github::Deploys.new
 
-return model.merged_during_week(week) if week
-return model.merged_between(start, finish) if start
-return model.merged_on(on) if on
-return model.pr_title(title) if title
-return model.pr_for_branch(branch) if branch
-return model.merged_today if title.nil? && branch.nil? && start.nil? && finish.nil? && on.nil?
+return model.merged_during_week(options[:week]) if options[:week]
+return model.merged_between(options[:start], options[:finish]) if options[:start]
+return model.merged_on(options[:on]) if options[:on]
+return model.pr_title(options[:title]) if options[:title]
+return model.pr_for_branch(options[:branch]) if options[:branch]
+return model.merged_today if options[:title].nil? && options[:branch].nil? && options[:start].nil? && options[:finish].nil? && options[:on].nil?
